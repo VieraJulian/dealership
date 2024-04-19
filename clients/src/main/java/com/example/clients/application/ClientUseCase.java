@@ -8,6 +8,7 @@ import com.example.clients.infra.exception.ClientNotFoundException;
 import com.example.clients.infra.inputport.IClientInputPort;
 import com.example.clients.infra.outputport.ICarServicePort;
 import com.example.clients.infra.outputport.IClientMethods;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class ClientUseCase implements IClientInputPort {
     private ICarServicePort carServicePort;
 
     @Override
+    @CircuitBreaker(name = "cars", fallbackMethod = "fallbackGetCars")
     public ClientCarDTO getClientById(Long id) throws ClientNotFoundException {
         Client client = clientMethods.getById(id);
         List<CarDTO> carList = new ArrayList<>();
@@ -84,6 +86,7 @@ public class ClientUseCase implements IClientInputPort {
     }
 
     @Override
+    @CircuitBreaker(name = "cars", fallbackMethod = "fallbackGetCars")
     public ClientCarDTO buyCar(Long clientId, Long carId) throws ClientNotFoundException {
         Client clientDB = clientMethods.getById(clientId);
         CarDTO car = carServicePort.getCar(carId);
@@ -137,5 +140,12 @@ public class ClientUseCase implements IClientInputPort {
         clientMethods.deleteClient(id);
 
         return "Client deleted successfully";
+    }
+
+    public ClientCarDTO fallbackGetCars(Throwable throwable){
+        return ClientCarDTO.builder()
+                .client(null)
+                .cars(null)
+                .build();
     }
 }
