@@ -20,7 +20,7 @@ public class CarController {
     public ResponseEntity<CarDTO> getCar(@PathVariable Long id) {
         try {
             CarDTO car = carInputPort.getCar(id);
-            return new ResponseEntity<>(car, HttpStatus.CREATED);
+            return new ResponseEntity<>(car, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -40,7 +40,7 @@ public class CarController {
     public ResponseEntity<CarDTO> editCar(@PathVariable Long id, @RequestBody CarDTO car){
         try {
             CarDTO eCar = carInputPort.editCar(id, car);
-            return new ResponseEntity<>(eCar, HttpStatus.CREATED);
+            return new ResponseEntity<>(eCar, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -50,7 +50,7 @@ public class CarController {
     public ResponseEntity<List<CarDTO>> getCarList(@RequestParam int page, @RequestParam int size){
         try {
             List<CarDTO> carList = carInputPort.getCarList(page, size);
-            return new ResponseEntity<>(carList, HttpStatus.CREATED);
+            return new ResponseEntity<>(carList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -61,7 +61,7 @@ public class CarController {
         try {
             String msg = carInputPort.deleteCar(id);
 
-            return new ResponseEntity<>(msg, HttpStatus.CREATED);
+            return new ResponseEntity<>(msg, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
