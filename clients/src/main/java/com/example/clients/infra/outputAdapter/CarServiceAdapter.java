@@ -3,6 +3,7 @@ package com.example.clients.infra.outputAdapter;
 import com.example.clients.infra.dto.CarDTO;
 import com.example.clients.infra.outputport.ICarServicePort;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
