@@ -1,5 +1,6 @@
 package com.example.clients.application;
 
+import com.example.clients.domain.Car;
 import com.example.clients.domain.Client;
 import com.example.clients.infra.dto.CarDTO;
 import com.example.clients.infra.dto.ClientCarDTO;
@@ -30,12 +31,12 @@ public class ClientUseCase implements IClientInputPort {
         Client client = clientMethods.getById(id);
         List<CarDTO> carList = new ArrayList<>();
 
-        if (client.getCarsIds() != null) {
-            for (Long carId : client.getCarsIds()) {
-                CarDTO car = carServicePort.getCar(carId);
+        if (client.getCars() != null) {
+               for (Car car : client.getCars()) {
+                   CarDTO carDTO = carServicePort.getCar(car.getId());
 
-                carList.add(car);
-            }
+                   carList.add(carDTO);
+               }
         }
 
         return ClientCarDTO.builder()
@@ -92,11 +93,14 @@ public class ClientUseCase implements IClientInputPort {
         CarDTO car = carServicePort.getCar(carId);
         List<CarDTO> carsList = new ArrayList<>();
 
-        if (clientDB.getCarsIds() == null){
-            clientDB.setCarsIds(new ArrayList<>());
+        if (clientDB.getCars() == null){
+            clientDB.setCars(new ArrayList<>());
         }
 
-        clientDB.getCarsIds().add(car.getId());
+        clientDB.getCars().add(Car.builder()
+                        .id(car.getId())
+                        .client(clientDB)
+                        .build());
 
         Client client = clientMethods.saveClient(clientDB);
 
@@ -107,8 +111,8 @@ public class ClientUseCase implements IClientInputPort {
                 .phone(client.getPhone())
                 .build();
 
-        for (Long cId : client.getCarsIds()) {
-            CarDTO carDTO = carServicePort.getCar(cId);
+        for (Car carC : client.getCars()) {
+            CarDTO carDTO = carServicePort.getCar(carC.getId());
             carsList.add(carDTO);
         }
 

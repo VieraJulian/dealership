@@ -20,5 +20,8 @@ public class Client {
     private String name;
     private String email;
     private String phone;
-    private List<Long> carsIds;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Car> cars;
 }
+
