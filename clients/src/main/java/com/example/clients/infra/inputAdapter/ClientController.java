@@ -44,7 +44,7 @@ public class ClientController {
         try {
             ClientDTO clientDTO = clientInputPort.createClient(client);
 
-            return new ResponseEntity<>(clientDTO, HttpStatus.OK);
+            return new ResponseEntity<>(clientDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
