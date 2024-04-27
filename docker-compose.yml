@@ -1,0 +1,86 @@
+version: '3.9'
+
+services:
+  eureka-server:
+    container_name: eureka
+    image: eureka
+    build: eureka/
+    restart: always
+    ports:
+      - '8761:8761'
+    networks:
+      - 'dealership-network'
+
+  config-server:
+    container_name: config
+    image: config
+    build: config/
+    restart: always
+    ports:
+      - '8888:8888'
+    networks:
+      - 'dealership-network'
+    depends_on:
+      - eureka-server
+
+  api-gateway:
+    container_name: gateway
+    image: gateway
+    build: gateway/
+    restart: always
+    ports:
+      - '443:443'
+    networks:
+      - 'dealership-network'
+    depends_on:
+      - eureka-server
+      - config-server
+
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:8.2.0
+    restart: always
+    ports:
+      - '3306:3306'
+    networks:
+      - 'dealership-network'
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=clients,cars
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql-data:/var/lib/mysql
+
+  cars-service:
+    container_name: cars-service
+    image: cars-service
+    build: cars/
+    restart: always
+    ports:
+      - '3000:3000'
+    networks:
+      - 'dealership-network'
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql-db
+
+  clients-service:
+    container_name: clients-service
+    image: clients-service
+    build: clients/
+    restart: always
+    ports:
+      - '3001:3001'
+    networks:
+      - 'dealership-network'
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql-db
+
+networks:
+  dealership-network:
+
+volumes:
+  mysql-data:
